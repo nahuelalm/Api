@@ -1,30 +1,25 @@
-# Usa una imagen base de Maven con OpenJDK para construir la aplicación
-FROM maven:3.9.8-openjdk-22 AS build
+# Etapa de construcción
+FROM maven:3.9.8-eclipse-temurin-22 AS build
 
-# Configura el directorio de trabajo
 WORKDIR /app
 
-# Copia el archivo pom.xml y las dependencias
 COPY pom.xml .
-
-# Descarga las dependencias sin compilar
 RUN mvn dependency:go-offline -B
 
-# Copia el resto de la aplicación y compila
 COPY src ./src
-RUN mvn clean package -DskipTests
+RUN mvn clean install -DskipTests -B
 
-# Usa una imagen base de OpenJDK para ejecutar la aplicación
-FROM openjdk:22-jdk-slim
+# Agregar comando para listar archivos en target (solo para depuración)
+RUN ls -l /app/target
 
-# Configura el directorio de trabajo
+# Etapa de ejecución
+FROM eclipse-temurin:22.0.2_9-jdk
+
 WORKDIR /app
 
-# Copia el jar de la fase de compilación
-COPY --from=build /app/target/*.jar app.jar
+# Copiar el archivo JAR desde la etapa de construcción
+COPY --from=build /app/target/primeraApi-0.0.1-SNAPSHOT.jar /app/tu-app.jar
 
-# Expone el puerto que usa la aplicación
 EXPOSE 8080
 
-# Comando para ejecutar la aplicación
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "tu-app.jar"]
