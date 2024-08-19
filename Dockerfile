@@ -1,5 +1,5 @@
 # Usa una imagen base de Maven para construir la aplicación
-FROM maven:3.9.8-openjdk-22.0.2 AS build
+FROM maven:3.8.6-openjdk-17 AS build
 
 # Configura el directorio de trabajo
 WORKDIR /app
@@ -23,7 +23,7 @@ WORKDIR /app
 # Copia el jar de la fase de compilación
 COPY --from=build /app/target/*.jar app.jar
 
-# Exponer el puerto que usa la aplicación
+# Expone el puerto que usa la aplicación
 EXPOSE 8080
 
 # Comando para ejecutar la aplicación
