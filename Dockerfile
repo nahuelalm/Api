@@ -1,5 +1,5 @@
-# Usa una imagen base de Maven para construir la aplicación
-FROM maven:3.8.6-openjdk-17 AS build
+# Usa una imagen base de Maven con OpenJDK para construir la aplicación
+FROM maven:3.9.8-openjdk-22 AS build
 
 # Configura el directorio de trabajo
 WORKDIR /app
@@ -15,7 +15,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Usa una imagen base de OpenJDK para ejecutar la aplicación
-FROM openjdk:17-jdk-slim
+FROM openjdk:22-jdk-slim
 
 # Configura el directorio de trabajo
 WORKDIR /app
